@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cotizador</title>
+</head>
+<body>
+
+<h2>Empresa</h2>
+<form method="POST">
+
+<input type="text" name="empresa" placeholder="Empresa"><br><br>
+<input type="text" name="cliente" placeholder="Cliente"><br><br>
+
+<textarea name="notas" placeholder="Notas"></textarea><br><br>
+
+<h3>Agregar Producto</h3>
+
+<input name="servicio" placeholder="Servicio">
+<input name="desc" placeholder="Descripción">
+<input name="qty" placeholder="Cantidad">
+<input name="precio" placeholder="Precio">
+
+<button name="agregar">Agregar</button>
+
+<h3>Productos</h3>
+
+<table border="1">
+<tr>
+<th>Servicio</th>
+<th>Desc</th>
+<th>Qty</th>
+<th>Precio</th>
+<th>Total</th>
+<th>Eliminar</th>
+</tr>
+
+{% for p in productos %}
+<tr>
+<td>{{p[0]}}</td>
+<td>{{p[1]}}</td>
+<td>{{p[2]}}</td>
+<td>{{p[3]}}</td>
+<td>{{p[4]}}</td>
+<td>
+<button name="eliminar" value="{{loop.index0}}" type="submit">X</button>
+<input type="hidden" name="index" value="{{loop.index0}}">
+</td>
+</tr>
+{% endfor %}
+</table>
+
+<br>
+
+<button name="pdf">Generar PDF</button>
+<button name="nuevo">Nueva</button>
+
+</form>
+
+</body>
+</html>
