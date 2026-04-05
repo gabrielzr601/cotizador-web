@@ -18,17 +18,16 @@ def index():
 
         # ===== AGREGAR =====
         if "agregar" in request.form:
-            servicio = request.form.get("servicio")
-            desc = request.form.get("desc")
-            qty = request.form.get("qty")
-            precio = request.form.get("precio")
+            servicio = request.form.get("servicio", "")
+            desc = request.form.get("desc", "")
+            qty = request.form.get("qty", "0")
+            precio = request.form.get("precio", "0")
 
-            if servicio and qty and precio:
-                try:
-                    total = float(qty) * float(precio)
-                    productos.append([servicio, desc, qty, precio, total])
-                except:
-                    pass
+            try:
+                total = float(qty) * float(precio)
+                productos.append([servicio, desc, qty, precio, total])
+            except:
+                pass
 
         # ===== ELIMINAR =====
         elif "eliminar" in request.form:
@@ -44,13 +43,13 @@ def index():
 
         # ===== PDF =====
         elif "pdf" in request.form:
-            quote_subject = request.form.get("cliente", "")
-            empresa = request.form.get("empresa", "")
 
-            notas = request.form.get("notas")
+            empresa = request.form.get("empresa", "")
+            quote_subject = request.form.get("cliente", "")
+            notas = request.form.get("notas", "")
 
             fecha = datetime.datetime.now().strftime("%Y-%m-%d")
-            nombre_archivo = f"cotizacion.pdf"
+            nombre_archivo = "cotizacion.pdf"
 
             pdf = SimpleDocTemplate(nombre_archivo, pagesize=letter)
             styles = getSampleStyleSheet()
@@ -87,9 +86,9 @@ def index():
                     Paragraph("<b>Quote Subject</b>", styles["Heading3"])
                 ],
                 [
-                    Paragraph(empresa if empresa else "", styles["Normal"]),
+                    Paragraph(empresa, styles["Normal"]),
                     "",
-                    Paragraph(quote_subject if quote_subject else "", styles["Normal"])
+                    Paragraph(quote_subject, styles["Normal"])
                 ],
                 [
                     "",
@@ -137,7 +136,7 @@ def index():
             elements.append(table)
             elements.append(Spacer(1, 20))
 
-            # ================= TOTALS (RIGHT SIDE) =================
+            # ================= TOTALS =================
             subtotal = sum([p[4] for p in productos])
             rough = subtotal * 0.60
             final = subtotal * 0.40
@@ -156,7 +155,6 @@ def index():
                 ("ALIGN", (1,0), (-1,-1), "RIGHT"),
             ]))
 
-            # alinearlo a la derecha
             wrapper = Table([[totals_table]], colWidths=[500])
             wrapper.setStyle(TableStyle([
                 ("ALIGN", (0,0), (-1,-1), "RIGHT"),
@@ -167,13 +165,11 @@ def index():
 
             # ================= NOTES =================
             elements.append(Paragraph("<b>Notes</b>", styles["Heading3"]))
-            elements.append(Paragraph(notas if notas else "", styles["Normal"]))
+            elements.append(Paragraph(notas, styles["Normal"]))
 
-            # ================= BUILD =================
             pdf.build(elements)
 
             return send_file(nombre_archivo, as_attachment=True)
-
 
     return render_template("index.html", productos=productos)
 

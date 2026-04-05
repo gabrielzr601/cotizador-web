@@ -11,9 +11,7 @@
             padding: 20px;
         }
 
-        h2 {
-            text-align: center;
-        }
+        h2 { text-align: center; }
 
         .card {
             background: white;
@@ -60,9 +58,7 @@
             text-align: center;
         }
 
-        th {
-            background: #e5e7eb;
-        }
+        th { background: #e5e7eb; }
     </style>
 </head>
 
@@ -72,7 +68,6 @@
 
 <form method="POST">
 
-    <!-- EMPRESA -->
     <div class="card">
         <h3>Company Info</h3>
         <input name="empresa" placeholder="Company">
@@ -80,7 +75,6 @@
         <textarea name="notas" placeholder="Notes"></textarea>
     </div>
 
-    <!-- PRODUCTOS -->
     <div class="card">
         <h3>Add Service</h3>
 
@@ -90,11 +84,10 @@
             <input name="qty" placeholder="Qty">
             <input name="precio" placeholder="Price">
 
-            <button class="blue" name="agregar">Add</button>
+            <button type="submit" class="blue" name="agregar">Add</button>
         </div>
     </div>
 
-    <!-- TABLA -->
     <div class="card">
         <h3>Products</h3>
 
@@ -116,17 +109,15 @@
                 <td>{{p[3]}}</td>
                 <td>{{p[4]}}</td>
                 <td>
-                    <button class="red" name="eliminar" value="{{loop.index0}}">X</button>
+                    <button type="submit" class="red" name="eliminar" value="{{loop.index0}}">X</button>
                 </td>
             </tr>
             {% endfor %}
         </table>
     </div>
 
-    <!-- BOTONES -->
     <button type="submit" class="green" name="pdf">Generate PDF</button>
     <button type="submit" class="gray" name="nuevo">New</button>
-
 
 </form>
 
