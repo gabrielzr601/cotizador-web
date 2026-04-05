@@ -77,7 +77,7 @@ def index():
 
             return send_file(nombre_archivo, as_attachment=True)
 
-    return render_template("index.html", productos=productos)
+    return render_template("/templates/index.html", productos=productos)
 
 
 if __name__ == "__main__":
