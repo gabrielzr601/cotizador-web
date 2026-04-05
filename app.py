@@ -168,6 +168,7 @@ def index():
             elements.append(Paragraph(notas, styles["Normal"]))
 
             pdf.build(elements)
+            print("FORM COMPLETO:", request.form.to_dict())
 
             return send_file(nombre_archivo, as_attachment=True)
 
