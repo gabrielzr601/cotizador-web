@@ -96,8 +96,6 @@ def index():
             # ================= QUOTE INFO =================
             info_data = [
                 [
-                    Paragraph("<b>Company</b>", styles["Heading3"]),
-                    "",
                     Paragraph("<b>Quote Subject</b>", styles["Heading3"])
                 ],
                 [
