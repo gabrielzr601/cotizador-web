@@ -3,98 +3,191 @@ from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
-import io
+import datetime
+import os
 
 app = Flask(__name__)
 
 productos = []
 
+# 🔥 MEMORIA GLOBAL PARA CAMPOS
+empresa_global = ""
+cliente_global = ""
+notas_global = ""
+
 @app.route("/", methods=["GET", "POST"])
 def index():
 
     global productos
-
-    empresa = ""
-    cliente = ""
-    notas = ""
+    global empresa_global, cliente_global, notas_global
 
     if request.method == "POST":
 
-        # 🔥 SIEMPRE CAPTURAR CAMPOS
-        empresa = request.form.get("empresa", "")
-        cliente = request.form.get("cliente", "")
-        notas = request.form.get("notas", "")
+        action = request.form.get("action")
 
-        servicio = request.form.get("servicio", "")
-        desc = request.form.get("desc", "")
-        qty = request.form.get("qty", "")
-        precio = request.form.get("precio", "")
+        # 🔥 CAPTURAR SIEMPRE CAMPOS (IMPORTANTE FIX)
+        empresa_global = request.form.get("empresa", empresa_global)
+        cliente_global = request.form.get("cliente", cliente_global)
+        notas_global = request.form.get("notas", notas_global)
 
-        # BOTÓN AGREGAR
-        if "agregar" in request.form:
-            if servicio and qty and precio:
+        # ===== AGREGAR =====
+        if action == "agregar":
+            servicio = request.form.get("servicio", "")
+            desc = request.form.get("desc", "")
+            qty = request.form.get("qty", "0")
+            precio = request.form.get("precio", "0")
+
+            try:
                 total = float(qty) * float(precio)
                 productos.append([servicio, desc, qty, precio, total])
+            except:
+                pass
 
-        # BOTÓN ELIMINAR
-        if "eliminar" in request.form:
-            idx = int(request.form["eliminar"])
-            if 0 <= idx < len(productos):
-                productos.pop(idx)
+        # ===== ELIMINAR =====
+        elif action == "eliminar":
+            try:
+                i = int(request.form.get("index"))
+                productos.pop(i)
+            except:
+                pass
 
-        # BOTÓN NUEVO
-        if "nuevo" in request.form:
+        # ===== NUEVO =====
+        elif action == "nuevo":
             productos = []
-            empresa = ""
-            cliente = ""
-            notas = ""
+            empresa_global = ""
+            cliente_global = ""
+            notas_global = ""
 
-        # BOTÓN PDF
-        if "pdf" in request.form:
-            return generar_pdf(empresa, cliente, notas, productos)
+        # ===== PDF =====
+        elif action == "pdf":
+
+            print("FORM DEBUG:", request.form.to_dict())
+
+            fecha = datetime.datetime.now().strftime("%Y-%m-%d")
+            nombre_archivo = "cotizacion.pdf"
+
+            pdf = SimpleDocTemplate(nombre_archivo, pagesize=letter)
+            styles = getSampleStyleSheet()
+            elements = []
+
+            # ================= HEADER =================
+            header_data = [
+                [
+                    Paragraph(f"<b>{empresa_global}</b>", styles["Heading1"]),
+                    Paragraph("""
+                    <para align=right>
+                    432-232-4434<br/>
+                    ottovasquez19@gmail.com<br/>
+                    1720 Triumph Trl, Arlington, TX 76002
+                    </para>
+                    """, styles["Normal"])
+                ]
+            ]
+
+            header_table = Table(header_data, colWidths=[300, 250])
+            header_table.setStyle(TableStyle([
+                ("VALIGN", (0,0), (-1,-1), "TOP"),
+                ("ALIGN", (1,0), (1,0), "RIGHT"),
+                ("BOTTOMPADDING", (0,0), (-1,-1), 20),
+            ]))
+
+            elements.append(header_table)
+
+            # ================= QUOTE INFO =================
+            info_data = [
+                [
+                    Paragraph("<b>Company</b>", styles["Heading3"]),
+                    "",
+                    Paragraph("<b>Quote Subject</b>", styles["Heading3"])
+                ],
+                [
+                    Paragraph(empresa_global, styles["Normal"]),
+                    "",
+                    Paragraph(cliente_global, styles["Normal"])
+                ],
+                [
+                    "",
+                    "",
+                    Paragraph("<b>Quote Date</b>", styles["Heading3"])
+                ],
+                [
+                    "",
+                    "",
+                    fecha
+                ]
+            ]
+
+            info_table = Table(info_data, colWidths=[200, 200, 150])
+            info_table.setStyle(TableStyle([
+                ("GRID", (0,0), (-1,-1), 0.2, colors.grey),
+                ("VALIGN", (0,0), (-1,-1), "TOP"),
+                ("BOTTOMPADDING", (0,0), (-1,-1), 8),
+            ]))
+
+            elements.append(info_table)
+            elements.append(Spacer(1, 20))
+
+            # ================= PRODUCT TABLE =================
+            data = [["Service", "Description", "Qty", "Price", "Total"]]
+
+            for p in productos:
+                data.append([
+                    p[0],
+                    p[1],
+                    p[2],
+                    f"${float(p[3]):.2f}",
+                    f"${p[4]:.2f}"
+                ])
+
+            table = Table(data, colWidths=[120, 180, 50, 80, 80])
+            table.setStyle(TableStyle([
+                ("BACKGROUND", (0,0), (-1,0), colors.lightgrey),
+                ("GRID", (0,0), (-1,-1), 0.5, colors.grey),
+                ("FONTNAME", (0,0), (-1,0), "Helvetica-Bold"),
+                ("ALIGN", (2,1), (-1,-1), "CENTER"),
+            ]))
+
+            elements.append(table)
+            elements.append(Spacer(1, 20))
+
+            # ================= TOTALS =================
+            subtotal = sum([p[4] for p in productos])
+            rough = subtotal * 0.60
+            final = subtotal * 0.40
+
+            totals_data = [
+                ["Total", f"${subtotal:.2f}"],
+                ["Rough-in (60%)", f"${rough:.2f}"],
+                ["Final (40%)", f"${final:.2f}"],
+            ]
+
+            totals_table = Table(totals_data, colWidths=[150, 100])
+            totals_table.setStyle(TableStyle([
+                ("GRID", (0,0), (-1,-1), 0.5, colors.grey),
+                ("ALIGN", (1,0), (-1,-1), "RIGHT"),
+            ]))
+
+            wrapper = Table([[totals_table]], colWidths=[500])
+            elements.append(wrapper)
+            elements.append(Spacer(1, 20))
+
+            # ================= NOTES =================
+            elements.append(Paragraph("<b>Notes</b>", styles["Heading3"]))
+            elements.append(Paragraph(notas_global, styles["Normal"]))
+
+            pdf.build(elements)
+
+            return send_file(nombre_archivo, as_attachment=True)
 
     return render_template(
         "index.html",
         productos=productos,
-        empresa=empresa,
-        cliente=cliente,
-        notas=notas
+        empresa=empresa_global,
+        cliente=cliente_global,
+        notas=notas_global
     )
 
 
-def generar_pdf(empresa, cliente, notas, productos):
-    buffer = io.BytesIO()
-    doc = SimpleDocTemplate(buffer, pagesize=letter)
-
-    styles = getSampleStyleSheet()
-    elements = []
-
-    # 🟢 ENCABEZADO
-    elements.append(Paragraph(f"<b>Company:</b> {empresa}", styles["Normal"]))
-    elements.append(Paragraph(f"<b>Quote Subject:</b> {cliente}", styles["Normal"]))
-    elements.append(Paragraph(f"<b>Notes:</b> {notas}", styles["Normal"]))
-    elements.append(Spacer(1, 12))
-
-    # 🟢 TABLA
-    data = [["Service", "Description", "Qty", "Price", "Total"]]
-
-    for p in productos:
-        data.append(p)
-
-    table = Table(data)
-    table.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
-        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-        ("GRID", (0, 0), (-1, -1), 0.5, colors.black),
-    ]))
-
-    elements.append(table)
-
-    doc.build(elements)
-    buffer.seek(0)
-
-    return send_file(buffer, as_attachment=True, download_name="quote.pdf")
-
-
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
