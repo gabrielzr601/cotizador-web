@@ -75,9 +75,11 @@
     <!-- EMPRESA -->
     <div class="card">
         <h3>Company Info</h3>
-        <input name="empresa" placeholder="Company">
-        <input name="cliente" placeholder="Quote Subject">
-        <textarea name="notas" placeholder="Notes"></textarea>
+
+        <!-- 🔥 FIX: mantener valores -->
+        <input name="empresa" placeholder="Company" value="{{empresa}}">
+        <input name="cliente" placeholder="Quote Subject" value="{{cliente}}">
+        <textarea name="notas" placeholder="Notes">{{notas}}</textarea>
     </div>
 
     <!-- PRODUCTOS -->
@@ -90,7 +92,8 @@
             <input name="qty" placeholder="Qty">
             <input name="precio" placeholder="Price">
 
-            <button class="blue" name="agregar">Add</button>
+            <!-- 🔥 IMPORTANTE -->
+            <button class="blue" name="action" value="agregar">Add</button>
         </div>
     </div>
 
@@ -116,7 +119,10 @@
                 <td>{{p[3]}}</td>
                 <td>{{p[4]}}</td>
                 <td>
-                    <button class="red" name="eliminar" value="{{loop.index0}}">X</button>
+                    <button class="red" name="action" value="eliminar">
+                        <input type="hidden" name="index" value="{{loop.index0}}">
+                        X
+                    </button>
                 </td>
             </tr>
             {% endfor %}
@@ -124,8 +130,8 @@
     </div>
 
     <!-- BOTONES -->
-    <button class="green" name="pdf">Generate PDF</button>
-    <button class="gray" name="nuevo">New</button>
+    <button class="green" name="action" value="pdf">Generate PDF</button>
+    <button class="gray" name="action" value="nuevo">New</button>
 
 </form>
 
