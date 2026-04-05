@@ -108,7 +108,7 @@ def index():
                 [
                     "",
                     "",
-                    Paragraph("<b>Quote Date</b>", styles["Heading3"])
+                    Paragraph("<b>Quote Sent</b>", styles["Heading3"])
                 ],
                 [
                     "",
@@ -119,10 +119,11 @@ def index():
 
             info_table = Table(info_data, colWidths=[200, 200, 150])
             info_table.setStyle(TableStyle([
-                ("GRID", (0,0), (-1,-1), 0.2, colors.grey),
+                ("ALIGN", (0,0), (-1,-1), "LEFT"),
                 ("VALIGN", (0,0), (-1,-1), "TOP"),
                 ("BOTTOMPADDING", (0,0), (-1,-1), 8),
             ]))
+
 
             elements.append(info_table)
             elements.append(Spacer(1, 20))
