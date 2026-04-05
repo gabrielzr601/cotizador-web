@@ -99,21 +99,16 @@ def index():
                     Paragraph("<b>Quote Subject</b>", styles["Heading3"])
                 ],
                 [
-                    Paragraph(empresa_global, styles["Normal"]),
-                    "",
                     Paragraph(cliente_global, styles["Normal"])
                 ],
                 [
-                    "",
-                    "",
                     Paragraph("<b>Quote Sent</b>", styles["Heading3"])
                 ],
                 [
-                    "",
-                    "",
                     fecha
                 ]
             ]
+
 
             info_table = Table(info_data, colWidths=[200, 200, 150])
             info_table.setStyle(TableStyle([
