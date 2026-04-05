@@ -172,7 +172,12 @@ def index():
             # ================= BUILD =================
             pdf.build(elements)
 
-            return send_file(nombre_archivo, as_attachment=True)
+            return send_file(
+                nombre_archivo,
+                as_attachment=True,
+                download_name=nombre_archivo
+            )
+
 
     return render_template(
         "index.html",
