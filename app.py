@@ -44,8 +44,9 @@ def index():
 
         # ===== PDF =====
         elif "pdf" in request.form:
-            empresa = request.form.get("empresa")
-            cliente = request.form.get("cliente")
+            quote_subject = request.form.get("cliente", "")
+            empresa = request.form.get("empresa", "")
+
             notas = request.form.get("notas")
 
             fecha = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -61,9 +62,9 @@ def index():
                     Paragraph(f"<b>{empresa}</b>", styles["Heading1"]),
                     Paragraph("""
                     <para align=right>
-                    Phone number: 432-232-4434<br/>
-                    Email: ottovasquez19@gmail.com<br/>
-                    Address: 1720 Triumph Trl, Arlington, TX 76002
+                    432-232-4434<br/>
+                    ottovasquez19@gmail.com<br/>
+                    1720 Triumph Trl, Arlington, TX 76002
                     </para>
                     """, styles["Normal"])
                 ]
@@ -81,19 +82,19 @@ def index():
             # ================= QUOTE INFO =================
             info_data = [
                 [
-                    Paragraph("<b>Quote Subject</b>", styles["Heading3"]),
+                    Paragraph("<b>Company</b>", styles["Heading3"]),
                     "",
-                    Paragraph("<b>Quote</b>", styles["Heading3"])
+                    Paragraph("<b>Quote Subject</b>", styles["Heading3"])
                 ],
                 [
-                    cliente,
+                    Paragraph(empresa if empresa else "", styles["Normal"]),
                     "",
-                    ""
+                    Paragraph(quote_subject if quote_subject else "", styles["Normal"])
                 ],
                 [
                     "",
                     "",
-                    Paragraph("<b>Quote Sent</b>", styles["Heading3"])
+                    Paragraph("<b>Quote Date</b>", styles["Heading3"])
                 ],
                 [
                     "",
