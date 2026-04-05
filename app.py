@@ -71,9 +71,9 @@ def index():
             # ================= HEADER (IGUAL TKINTER) =================
             header_data = [
                 [Paragraph(f"<b>{empresa_global}</b>", styles['Heading1'])],
-                ['', '', Paragraph('Phone number: 432-232-4434', styles['Normal'])],
-                ['', '', Paragraph('Email: ottovasquez19@gmail.com', styles['Normal'])],
-                ['', '', Paragraph('Address: 1720 Triumph Trl, Arlington, TX 76002', styles['Normal'])],
+                ['', '', Paragraph('432-232-4434', styles['Normal'])],
+                ['', '', Paragraph('ottovasquez19@gmail.com', styles['Normal'])],
+                ['', '', Paragraph('1720 Triumph Trl, Arlington, TX 76002', styles['Normal'])],
             ]
 
             header = Table(header_data, colWidths=[250, 50, 200])
