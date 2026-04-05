@@ -48,26 +48,72 @@ def index():
             cliente = request.form.get("cliente")
             notas = request.form.get("notas")
 
-            fecha = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-            nombre_archivo = f"cotizacion_{fecha}.pdf"
+            fecha = datetime.datetime.now().strftime("%Y-%m-%d")
+            nombre_archivo = f"cotizacion.pdf"
 
             pdf = SimpleDocTemplate(nombre_archivo, pagesize=letter)
             styles = getSampleStyleSheet()
             elements = []
 
-            # HEADER
-            elements.append(Paragraph(f"<b>{empresa}</b>", styles['Heading1']))
-            elements.append(Paragraph("Phone: 432-232-4434", styles['Normal']))
-            elements.append(Paragraph("Email: empresa@email.com", styles['Normal']))
-            elements.append(Paragraph("Address: Arlington, TX", styles['Normal']))
-            elements.append(Spacer(1, 15))
+            # ================= HEADER =================
+            header_data = [
+                [
+                    Paragraph(f"<b>{empresa}</b>", styles["Heading1"]),
+                    Paragraph("""
+                    <para align=right>
+                    Phone number: 432-232-4434<br/>
+                    Email: ottovasquez19@gmail.com<br/>
+                    Address: 1720 Triumph Trl, Arlington, TX 76002
+                    </para>
+                    """, styles["Normal"])
+                ]
+            ]
 
-            # CLIENTE
-            elements.append(Paragraph(f"<b>Quote Subject:</b> {cliente}", styles['Normal']))
-            elements.append(Spacer(1, 15))
+            header_table = Table(header_data, colWidths=[300, 250])
+            header_table.setStyle(TableStyle([
+                ("VALIGN", (0,0), (-1,-1), "TOP"),
+                ("ALIGN", (1,0), (1,0), "RIGHT"),
+                ("BOTTOMPADDING", (0,0), (-1,-1), 20),
+            ]))
 
-            # TABLA
-            data = [["Service", "Description", "Qty", "Price", "Total"]]
+            elements.append(header_table)
+
+            # ================= QUOTE INFO =================
+            info_data = [
+                [
+                    Paragraph("<b>Quote Subject</b>", styles["Heading3"]),
+                    "",
+                    Paragraph("<b>Quote</b>", styles["Heading3"])
+                ],
+                [
+                    cliente,
+                    "",
+                    ""
+                ],
+                [
+                    "",
+                    "",
+                    Paragraph("<b>Quote Sent</b>", styles["Heading3"])
+                ],
+                [
+                    "",
+                    "",
+                    fecha
+                ]
+            ]
+
+            info_table = Table(info_data, colWidths=[200, 200, 150])
+            info_table.setStyle(TableStyle([
+                ("ALIGN", (0,0), (-1,-1), "LEFT"),
+                ("VALIGN", (0,0), (-1,-1), "TOP"),
+                ("BOTTOMPADDING", (0,0), (-1,-1), 8),
+            ]))
+
+            elements.append(info_table)
+            elements.append(Spacer(1, 20))
+
+            # ================= PRODUCT TABLE =================
+            data = [["Service/Product", "Description", "Qty", "Unit Cost", "Total"]]
 
             for p in productos:
                 data.append([
@@ -78,41 +124,55 @@ def index():
                     f"${p[4]:.2f}"
                 ])
 
-            table = Table(data)
+            table = Table(data, colWidths=[120, 180, 50, 80, 80])
+
             table.setStyle(TableStyle([
                 ("BACKGROUND", (0,0), (-1,0), colors.lightgrey),
                 ("GRID", (0,0), (-1,-1), 0.5, colors.grey),
+                ("ALIGN", (2,1), (-1,-1), "CENTER"),
+                ("FONTNAME", (0,0), (-1,0), "Helvetica-Bold"),
             ]))
 
             elements.append(table)
-            elements.append(Spacer(1, 15))
+            elements.append(Spacer(1, 20))
 
-            # TOTALES
+            # ================= TOTALS (RIGHT SIDE) =================
             subtotal = sum([p[4] for p in productos])
             rough = subtotal * 0.60
             final = subtotal * 0.40
 
-            totals = [
+            totals_data = [
                 ["Total", f"${subtotal:.2f}"],
                 ["Rough-in (60%)", f"${rough:.2f}"],
                 ["Final (40%)", f"${final:.2f}"],
             ]
 
-            t = Table(totals)
-            t.setStyle(TableStyle([
+            totals_table = Table(totals_data, colWidths=[150, 100])
+
+            totals_table.setStyle(TableStyle([
                 ("GRID", (0,0), (-1,-1), 0.5, colors.grey),
+                ("BACKGROUND", (0,0), (-1,0), colors.lightgrey),
+                ("ALIGN", (1,0), (-1,-1), "RIGHT"),
             ]))
 
-            elements.append(t)
+            # alinearlo a la derecha
+            wrapper = Table([[totals_table]], colWidths=[500])
+            wrapper.setStyle(TableStyle([
+                ("ALIGN", (0,0), (-1,-1), "RIGHT"),
+            ]))
 
-            # NOTES
-            elements.append(Spacer(1, 15))
-            elements.append(Paragraph("<b>Notes</b>", styles['Heading3']))
-            elements.append(Paragraph(notas if notas else "", styles['Normal']))
+            elements.append(wrapper)
+            elements.append(Spacer(1, 20))
 
+            # ================= NOTES =================
+            elements.append(Paragraph("<b>Notes</b>", styles["Heading3"]))
+            elements.append(Paragraph(notas if notas else "", styles["Normal"]))
+
+            # ================= BUILD =================
             pdf.build(elements)
 
             return send_file(nombre_archivo, as_attachment=True)
+
 
     return render_template("index.html", productos=productos)
 
