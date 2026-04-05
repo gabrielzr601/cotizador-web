@@ -62,7 +62,9 @@ def index():
         elif action == "pdf":
 
             fecha = datetime.datetime.now().strftime("%Y-%m-%d")
-            nombre_archivo = "cotizacion.pdf"
+            fecha_archivo = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            nombre_archivo = f"cotizacion_{fecha_archivo}.pdf"
+
 
             pdf = SimpleDocTemplate(nombre_archivo, pagesize=letter)
             styles = getSampleStyleSheet()
@@ -172,12 +174,7 @@ def index():
             # ================= BUILD =================
             pdf.build(elements)
 
-            return send_file(
-                nombre_archivo,
-                as_attachment=True,
-                download_name=nombre_archivo
-            )
-
+            return send_file(nombre_archivo, as_attachment=True)
 
     return render_template(
         "index.html",
