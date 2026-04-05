@@ -2,57 +2,130 @@
 <html>
 <head>
     <title>Cotizador</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #f3f4f6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .card {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            color: white;
+            border-radius: 5px;
+        }
+
+        .blue { background: #2563eb; }
+        .red { background: #ef4444; }
+        .green { background: #10b981; }
+        .gray { background: #6b7280; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background: #e5e7eb;
+        }
+    </style>
 </head>
+
 <body>
 
-<h2>Empresa</h2>
+<h2>Cotizador Profesional</h2>
+
 <form method="POST">
 
-<input type="text" name="empresa" placeholder="Empresa"><br><br>
-<input type="text" name="cliente" placeholder="Cliente"><br><br>
+    <!-- EMPRESA -->
+    <div class="card">
+        <h3>Company Info</h3>
+        <input name="empresa" placeholder="Company">
+        <input name="cliente" placeholder="Quote Subject">
+        <textarea name="notas" placeholder="Notes"></textarea>
+    </div>
 
-<textarea name="notas" placeholder="Notas"></textarea><br><br>
+    <!-- PRODUCTOS -->
+    <div class="card">
+        <h3>Add Service</h3>
 
-<h3>Agregar Producto</h3>
+        <div class="row">
+            <input name="servicio" placeholder="Service">
+            <input name="desc" placeholder="Description">
+            <input name="qty" placeholder="Qty">
+            <input name="precio" placeholder="Price">
 
-<input name="servicio" placeholder="Servicio">
-<input name="desc" placeholder="Descripción">
-<input name="qty" placeholder="Cantidad">
-<input name="precio" placeholder="Precio">
+            <button class="blue" name="agregar">Add</button>
+        </div>
+    </div>
 
-<button name="agregar">Agregar</button>
+    <!-- TABLA -->
+    <div class="card">
+        <h3>Products</h3>
 
-<h3>Productos</h3>
+        <table>
+            <tr>
+                <th>Service</th>
+                <th>Description</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Total</th>
+                <th>Action</th>
+            </tr>
 
-<table border="1">
-<tr>
-<th>Servicio</th>
-<th>Desc</th>
-<th>Qty</th>
-<th>Precio</th>
-<th>Total</th>
-<th>Eliminar</th>
-</tr>
+            {% for p in productos %}
+            <tr>
+                <td>{{p[0]}}</td>
+                <td>{{p[1]}}</td>
+                <td>{{p[2]}}</td>
+                <td>{{p[3]}}</td>
+                <td>{{p[4]}}</td>
+                <td>
+                    <button class="red" name="eliminar" value="{{loop.index0}}">X</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
 
-{% for p in productos %}
-<tr>
-<td>{{p[0]}}</td>
-<td>{{p[1]}}</td>
-<td>{{p[2]}}</td>
-<td>{{p[3]}}</td>
-<td>{{p[4]}}</td>
-<td>
-<button name="eliminar" value="{{loop.index0}}" type="submit">X</button>
-<input type="hidden" name="index" value="{{loop.index0}}">
-</td>
-</tr>
-{% endfor %}
-</table>
-
-<br>
-
-<button name="pdf">Generar PDF</button>
-<button name="nuevo">Nueva</button>
+    <!-- BOTONES -->
+    <button class="green" name="pdf">Generate PDF</button>
+    <button class="gray" name="nuevo">New</button>
 
 </form>
 

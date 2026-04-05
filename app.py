@@ -2,8 +2,7 @@ from flask import Flask, render_template, request, send_file
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib import colors
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.enums import TA_LEFT
+from reportlab.lib.styles import getSampleStyleSheet
 import datetime
 import os
 
@@ -16,62 +15,100 @@ def index():
     global productos
 
     if request.method == "POST":
+
+        # ===== AGREGAR =====
         if "agregar" in request.form:
-            servicio = request.form["servicio"]
-            desc = request.form["desc"]
-            qty = request.form["qty"]
-            precio = request.form["precio"]
+            servicio = request.form.get("servicio")
+            desc = request.form.get("desc")
+            qty = request.form.get("qty")
+            precio = request.form.get("precio")
 
             if servicio and qty and precio:
-                total = float(qty) * float(precio)
-                productos.append([servicio, desc, qty, precio, total])
+                try:
+                    total = float(qty) * float(precio)
+                    productos.append([servicio, desc, qty, precio, total])
+                except:
+                    pass
 
+        # ===== ELIMINAR =====
         elif "eliminar" in request.form:
-            index = int(request.form.get("eliminar"))
-            productos.pop(index)
+            try:
+                i = int(request.form.get("eliminar"))
+                productos.pop(i)
+            except:
+                pass
 
+        # ===== NUEVO =====
         elif "nuevo" in request.form:
             productos = []
 
+        # ===== PDF =====
         elif "pdf" in request.form:
-            empresa = request.form["empresa"]
-            cliente = request.form["cliente"]
-            notas = request.form["notas"]
+            empresa = request.form.get("empresa")
+            cliente = request.form.get("cliente")
+            notas = request.form.get("notas")
 
-            nombre_archivo = "cotizacion.pdf"
+            fecha = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            nombre_archivo = f"cotizacion_{fecha}.pdf"
+
             pdf = SimpleDocTemplate(nombre_archivo, pagesize=letter)
             styles = getSampleStyleSheet()
             elements = []
 
             # HEADER
             elements.append(Paragraph(f"<b>{empresa}</b>", styles['Heading1']))
-            elements.append(Spacer(1, 10))
-            elements.append(Paragraph(f"Cliente: {cliente}", styles['Normal']))
-            elements.append(Spacer(1, 20))
+            elements.append(Paragraph("Phone: 432-232-4434", styles['Normal']))
+            elements.append(Paragraph("Email: empresa@email.com", styles['Normal']))
+            elements.append(Paragraph("Address: Arlington, TX", styles['Normal']))
+            elements.append(Spacer(1, 15))
+
+            # CLIENTE
+            elements.append(Paragraph(f"<b>Quote Subject:</b> {cliente}", styles['Normal']))
+            elements.append(Spacer(1, 15))
 
             # TABLA
-            data = [["Service", "Desc", "Qty", "Price", "Total"]]
+            data = [["Service", "Description", "Qty", "Price", "Total"]]
+
             for p in productos:
-                data.append([p[0], p[1], p[2], p[3], f"{p[4]:.2f}"])
+                data.append([
+                    p[0],
+                    p[1],
+                    p[2],
+                    f"${float(p[3]):.2f}",
+                    f"${p[4]:.2f}"
+                ])
 
             table = Table(data)
             table.setStyle(TableStyle([
-                ("GRID", (0,0), (-1,-1), 1, colors.black)
+                ("BACKGROUND", (0,0), (-1,0), colors.lightgrey),
+                ("GRID", (0,0), (-1,-1), 0.5, colors.grey),
             ]))
 
             elements.append(table)
-            elements.append(Spacer(1, 20))
+            elements.append(Spacer(1, 15))
 
-            # TOTAL
+            # TOTALES
             subtotal = sum([p[4] for p in productos])
-            elements.append(Paragraph(f"Total: ${subtotal:.2f}", styles['Normal']))
+            rough = subtotal * 0.60
+            final = subtotal * 0.40
 
-            # NOTAS
-            elements.append(Spacer(1, 20))
-            elements.append(Paragraph("Notes", styles['Heading3']))
+            totals = [
+                ["Total", f"${subtotal:.2f}"],
+                ["Rough-in (60%)", f"${rough:.2f}"],
+                ["Final (40%)", f"${final:.2f}"],
+            ]
 
-            notes_style = ParagraphStyle(name="Notes", alignment=TA_LEFT)
-            elements.append(Paragraph(notas, notes_style))
+            t = Table(totals)
+            t.setStyle(TableStyle([
+                ("GRID", (0,0), (-1,-1), 0.5, colors.grey),
+            ]))
+
+            elements.append(t)
+
+            # NOTES
+            elements.append(Spacer(1, 15))
+            elements.append(Paragraph("<b>Notes</b>", styles['Heading3']))
+            elements.append(Paragraph(notas if notas else "", styles['Normal']))
 
             pdf.build(elements)
 
@@ -83,4 +120,3 @@ def index():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
-
