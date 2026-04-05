@@ -1,32 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+    <meta charset="UTF-8">
     <title>Cotizador</title>
 
+    <!-- RESPONSIVE -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- FUENTE MODERNA -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
     <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
         body {
-            font-family: Arial;
-            background: #f3f4f6;
             margin: 0;
-            padding: 20px;
+            background: linear-gradient(135deg, #eef2ff, #f9fafb);
         }
 
         h2 {
             text-align: center;
+            margin: 20px 0;
+            color: #111827;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 15px;
         }
 
         .card {
             background: white;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 14px;
             border: 1px solid #e5e7eb;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
         }
 
         input, textarea {
             width: 100%;
-            padding: 8px;
-            margin: 5px 0;
+            padding: 10px;
+            margin: 6px 0;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus, textarea:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(37,99,235,0.2);
+        }
+
+        textarea {
+            resize: vertical;
         }
 
         .row {
@@ -35,12 +72,23 @@
             flex-wrap: wrap;
         }
 
+        .row input {
+            flex: 1;
+            min-width: 120px;
+        }
+
         button {
             padding: 10px 15px;
             border: none;
             cursor: pointer;
             color: white;
-            border-radius: 5px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
         }
 
         .blue { background: #2563eb; }
@@ -51,17 +99,65 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            background: white;
+            border-radius: 10px;
+            overflow: hidden;
         }
 
         th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
+            padding: 10px;
             text-align: center;
         }
 
         th {
             background: #e5e7eb;
+        }
+
+        tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        /* 🔥 RESPONSIVE TABLE */
+        @media (max-width: 768px) {
+
+            table thead {
+                display: none;
+            }
+
+            table, tbody, tr, td {
+                display: block;
+                width: 100%;
+            }
+
+            tr {
+                margin-bottom: 15px;
+                border: 1px solid #e5e7eb;
+                border-radius: 12px;
+                padding: 10px;
+                background: white;
+                box-shadow: 0 5px 10px rgba(0,0,0,0.05);
+            }
+
+            td {
+                text-align: left;
+                padding: 8px;
+                position: relative;
+            }
+
+            td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                display: block;
+                color: #6b7280;
+                margin-bottom: 3px;
+            }
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -70,70 +166,78 @@
 
 <h2>Cotizador Profesional</h2>
 
+<div class="container">
+
 <form method="POST">
 
     <!-- EMPRESA -->
     <div class="card">
-        <h3>Company Info</h3>
+        <h3>Información</h3>
 
-        <!-- 🔥 FIX: mantener valores -->
-        <input name="empresa" placeholder="Company" value="{{empresa}}">
+        <input name="empresa" placeholder="Empresa" value="{{empresa}}">
         <input name="cliente" placeholder="Quote Subject" value="{{cliente}}">
-        <textarea name="notas" placeholder="Notes">{{notas}}</textarea>
+        <textarea name="notas" placeholder="Notas">{{notas}}</textarea>
     </div>
 
     <!-- PRODUCTOS -->
     <div class="card">
-        <h3>Add Service</h3>
+        <h3>Agregar Servicio</h3>
 
         <div class="row">
-            <input name="servicio" placeholder="Service">
-            <input name="desc" placeholder="Description">
-            <input name="qty" placeholder="Qty" type="number">
-            <input name="precio" placeholder="Price" type="number">
+            <input name="servicio" placeholder="Servicio">
+            <input name="desc" placeholder="Descripción">
+            <input name="qty" placeholder="Cantidad" type="number">
+            <input name="precio" placeholder="Precio" type="number">
 
-            <!-- 🔥 IMPORTANTE -->
-            <button class="blue" name="action" value="agregar">Add</button>
+            <button class="blue" name="action" value="agregar">Agregar</button>
         </div>
     </div>
 
     <!-- TABLA -->
     <div class="card">
-        <h3>Products</h3>
+        <h3>Productos</h3>
 
         <table>
-            <tr>
-                <th>Service</th>
-                <th>Description</th>
-                <th>Qty</th>
-                <th>Price</th>
-                <th>Total</th>
-                <th>Action</th>
-            </tr>
+            <thead>
+                <tr>
+                    <th>Servicio</th>
+                    <th>Descripción</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Total</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
 
-            {% for p in productos %}
-            <tr>
-                <td>{{p[0]}}</td>
-                <td>{{p[1]}}</td>
-                <td>{{p[2]}}</td>
-                <td>{{p[3]}}</td>
-                <td>{{p[4]}}</td>
-                <td>
-                    <button class="red" name="action" value="eliminar">
-                        <input type="hidden" name="index" value="{{loop.index0}}">
-                        X
-                    </button>
-                </td>
-            </tr>
-            {% endfor %}
+            <tbody>
+                {% for p in productos %}
+                <tr>
+                    <td data-label="Servicio">{{p[0]}}</td>
+                    <td data-label="Descripción">{{p[1]}}</td>
+                    <td data-label="Cantidad">{{p[2]}}</td>
+                    <td data-label="Precio">{{p[3]}}</td>
+                    <td data-label="Total">{{p[4]}}</td>
+                    <td data-label="Acción">
+                        <button class="red" name="action" value="eliminar">
+                            <input type="hidden" name="index" value="{{loop.index0}}">
+                            X
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
     </div>
 
     <!-- BOTONES -->
-    <button class="green" name="action" value="pdf">Generate PDF</button>
-    <button class="gray" name="action" value="nuevo">New</button>
+    <div class="buttons">
+        <button class="green" name="action" value="pdf">Generar PDF</button>
+        <button class="gray" name="action" value="nuevo">Nuevo</button>
+    </div>
 
 </form>
+
+</div>
 
 </body>
 </html>
