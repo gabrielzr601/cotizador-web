@@ -2,64 +2,6 @@
 <html>
 <head>
     <title>Cotizador</title>
-
-    <style>
-        body {
-            font-family: Arial;
-            background: #f3f4f6;
-            margin: 0;
-            padding: 20px;
-        }
-
-        h2 { text-align: center; }
-
-        .card {
-            background: white;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 10px;
-            border: 1px solid #e5e7eb;
-        }
-
-        input, textarea {
-            width: 100%;
-            padding: 8px;
-            margin: 5px 0;
-        }
-
-        .row {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        button {
-            padding: 10px 15px;
-            border: none;
-            cursor: pointer;
-            color: white;
-            border-radius: 5px;
-        }
-
-        .blue { background: #2563eb; }
-        .red { background: #ef4444; }
-        .green { background: #10b981; }
-        .gray { background: #6b7280; }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
-        }
-
-        th { background: #e5e7eb; }
-    </style>
 </head>
 
 <body>
@@ -68,72 +10,55 @@
 
 <form method="POST">
 
-    <!-- COMPANY -->
-    <div class="card">
-        <h3>Company Info</h3>
+    <h3>Company Info</h3>
 
-        <input name="empresa" placeholder="Company">
-        <input name="cliente" placeholder="Quote Subject">
-        <textarea name="notas" placeholder="Notes"></textarea>
-    </div>
+    <input name="empresa" placeholder="Company" value="{{empresa}}">
+    <input name="cliente" placeholder="Quote Subject" value="{{cliente}}">
+    <textarea name="notas" placeholder="Notes">{{notas}}</textarea>
 
-    <!-- PRODUCT -->
-    <div class="card">
-        <h3>Add Service</h3>
+    <hr>
 
-        <div class="row">
-            <input name="servicio" placeholder="Service">
-            <input name="desc" placeholder="Description">
-            <input name="qty" placeholder="Qty">
-            <input name="precio" placeholder="Price">
+    <h3>Add Service</h3>
 
-            <button type="submit" class="blue" name="action" value="agregar">Add</button>
-        </div>
-    </div>
+    <input name="servicio" placeholder="Service">
+    <input name="desc" placeholder="Description">
+    <input name="qty" placeholder="Qty">
+    <input name="precio" placeholder="Price">
 
-    <!-- TABLE -->
-    <div class="card">
-        <h3>Products</h3>
+    <button type="submit" name="agregar">Add</button>
 
-        <table>
-            <tr>
-                <th>Service</th>
-                <th>Description</th>
-                <th>Qty</th>
-                <th>Price</th>
-                <th>Total</th>
-                <th>Action</th>
-            </tr>
+    <hr>
 
-            {% for p in productos %}
-            <tr>
-                <td>{{p[0]}}</td>
-                <td>{{p[1]}}</td>
-                <td>{{p[2]}}</td>
-                <td>{{p[3]}}</td>
-                <td>{{p[4]}}</td>
-                <td>
-                    <button type="submit"
-                            class="red"
-                            name="action"
-                            value="eliminar"
-                            formaction="?index={{loop.index0}}">
-                        X
-                    </button>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-    </div>
+    <h3>Products</h3>
 
-    <!-- ACTION BUTTONS -->
-    <button type="submit" class="green" name="action" value="pdf">
-        Generate PDF
-    </button>
+    <table border="1" width="100%">
+        <tr>
+            <th>Service</th>
+            <th>Description</th>
+            <th>Qty</th>
+            <th>Price</th>
+            <th>Total</th>
+            <th>Action</th>
+        </tr>
 
-    <button type="submit" class="gray" name="action" value="nuevo">
-        New
-    </button>
+        {% for p in productos %}
+        <tr>
+            <td>{{p[0]}}</td>
+            <td>{{p[1]}}</td>
+            <td>{{p[2]}}</td>
+            <td>{{p[3]}}</td>
+            <td>{{p[4]}}</td>
+            <td>
+                <button type="submit" name="eliminar" value="{{loop.index0}}">X</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <br>
+
+    <button type="submit" name="pdf">Generate PDF</button>
+    <button type="submit" name="nuevo">New</button>
 
 </form>
 
