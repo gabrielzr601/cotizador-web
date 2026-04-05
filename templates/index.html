@@ -68,13 +68,16 @@
 
 <form method="POST">
 
+    <!-- COMPANY -->
     <div class="card">
         <h3>Company Info</h3>
+
         <input name="empresa" placeholder="Company">
         <input name="cliente" placeholder="Quote Subject">
         <textarea name="notas" placeholder="Notes"></textarea>
     </div>
 
+    <!-- PRODUCT -->
     <div class="card">
         <h3>Add Service</h3>
 
@@ -84,10 +87,11 @@
             <input name="qty" placeholder="Qty">
             <input name="precio" placeholder="Price">
 
-            <button type="submit" class="blue" name="agregar">Add</button>
+            <button type="submit" class="blue" name="action" value="agregar">Add</button>
         </div>
     </div>
 
+    <!-- TABLE -->
     <div class="card">
         <h3>Products</h3>
 
@@ -109,15 +113,27 @@
                 <td>{{p[3]}}</td>
                 <td>{{p[4]}}</td>
                 <td>
-                    <button type="submit" class="red" name="eliminar" value="{{loop.index0}}">X</button>
+                    <button type="submit"
+                            class="red"
+                            name="action"
+                            value="eliminar"
+                            formaction="?index={{loop.index0}}">
+                        X
+                    </button>
                 </td>
             </tr>
             {% endfor %}
         </table>
     </div>
 
-    <button type="submit" class="green" name="pdf">Generate PDF</button>
-    <button type="submit" class="gray" name="nuevo">New</button>
+    <!-- ACTION BUTTONS -->
+    <button type="submit" class="green" name="action" value="pdf">
+        Generate PDF
+    </button>
+
+    <button type="submit" class="gray" name="action" value="nuevo">
+        New
+    </button>
 
 </form>
 

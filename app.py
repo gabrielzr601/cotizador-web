@@ -16,8 +16,10 @@ def index():
 
     if request.method == "POST":
 
+        action = request.form.get("action")
+
         # ===== AGREGAR =====
-        if "agregar" in request.form:
+        if action == "agregar":
             servicio = request.form.get("servicio", "")
             desc = request.form.get("desc", "")
             qty = request.form.get("qty", "0")
@@ -30,23 +32,25 @@ def index():
                 pass
 
         # ===== ELIMINAR =====
-        elif "eliminar" in request.form:
+        elif action == "eliminar":
             try:
-                i = int(request.form.get("eliminar"))
+                i = int(request.form.get("index"))
                 productos.pop(i)
             except:
                 pass
 
         # ===== NUEVO =====
-        elif "nuevo" in request.form:
+        elif action == "nuevo":
             productos = []
 
         # ===== PDF =====
-        elif "pdf" in request.form:
+        elif action == "pdf":
 
             empresa = request.form.get("empresa", "")
             quote_subject = request.form.get("cliente", "")
             notas = request.form.get("notas", "")
+
+            print("FORM DEBUG:", request.form.to_dict())  # 🔥 DEBUG
 
             fecha = datetime.datetime.now().strftime("%Y-%m-%d")
             nombre_archivo = "cotizacion.pdf"
@@ -104,7 +108,7 @@ def index():
 
             info_table = Table(info_data, colWidths=[200, 200, 150])
             info_table.setStyle(TableStyle([
-                ("ALIGN", (0,0), (-1,-1), "LEFT"),
+                ("GRID", (0,0), (-1,-1), 0.2, colors.grey),
                 ("VALIGN", (0,0), (-1,-1), "TOP"),
                 ("BOTTOMPADDING", (0,0), (-1,-1), 8),
             ]))
@@ -113,7 +117,7 @@ def index():
             elements.append(Spacer(1, 20))
 
             # ================= PRODUCT TABLE =================
-            data = [["Service/Product", "Description", "Qty", "Unit Cost", "Total"]]
+            data = [["Service", "Description", "Qty", "Price", "Total"]]
 
             for p in productos:
                 data.append([
@@ -125,12 +129,11 @@ def index():
                 ])
 
             table = Table(data, colWidths=[120, 180, 50, 80, 80])
-
             table.setStyle(TableStyle([
                 ("BACKGROUND", (0,0), (-1,0), colors.lightgrey),
                 ("GRID", (0,0), (-1,-1), 0.5, colors.grey),
-                ("ALIGN", (2,1), (-1,-1), "CENTER"),
                 ("FONTNAME", (0,0), (-1,0), "Helvetica-Bold"),
+                ("ALIGN", (2,1), (-1,-1), "CENTER"),
             ]))
 
             elements.append(table)
@@ -148,7 +151,6 @@ def index():
             ]
 
             totals_table = Table(totals_data, colWidths=[150, 100])
-
             totals_table.setStyle(TableStyle([
                 ("GRID", (0,0), (-1,-1), 0.5, colors.grey),
                 ("BACKGROUND", (0,0), (-1,0), colors.lightgrey),
@@ -168,7 +170,6 @@ def index():
             elements.append(Paragraph(notas, styles["Normal"]))
 
             pdf.build(elements)
-            print("FORM COMPLETO:", request.form.to_dict())
 
             return send_file(nombre_archivo, as_attachment=True)
 
