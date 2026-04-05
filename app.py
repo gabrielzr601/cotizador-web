@@ -27,7 +27,7 @@ def index():
                 productos.append([servicio, desc, qty, precio, total])
 
         elif "eliminar" in request.form:
-            index = int(request.form["index"])
+            index = int(request.form.get("eliminar"))
             productos.pop(index)
 
         elif "nuevo" in request.form:
