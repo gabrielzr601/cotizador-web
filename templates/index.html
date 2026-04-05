@@ -164,7 +164,7 @@
 
 <body>
 
-<h2>Cotizador Profesional</h2>
+<h2>Cotizador</h2>
 
 <div class="container">
 
@@ -172,11 +172,11 @@
 
     <!-- EMPRESA -->
     <div class="card">
-        <h3>Información</h3>
+        <h3>Information</h3>
 
-        <input name="empresa" placeholder="Empresa" value="{{empresa}}">
+        <input name="empresa" placeholder="Company" value="{{empresa}}">
         <input name="cliente" placeholder="Quote Subject" value="{{cliente}}">
-        <textarea name="notas" placeholder="Notas">{{notas}}</textarea>
+        <textarea name="notas" placeholder="Notes">{{notas}}</textarea>
     </div>
 
     <!-- PRODUCTOS -->
@@ -184,40 +184,40 @@
         <h3>Agregar Servicio</h3>
 
         <div class="row">
-            <input name="servicio" placeholder="Servicio">
-            <input name="desc" placeholder="Descripción">
-            <input name="qty" placeholder="Cantidad" type="number">
-            <input name="precio" placeholder="Precio" type="number">
+            <input name="servicio" placeholder="Service/Product">
+            <input name="desc" placeholder="Description">
+            <input name="qty" placeholder="Quantity" type="number">
+            <input name="precio" placeholder="Unit Price" type="number">
 
-            <button class="blue" name="action" value="agregar">Agregar</button>
+            <button class="blue" name="action" value="agregar">Add</button>
         </div>
     </div>
 
     <!-- TABLA -->
     <div class="card">
-        <h3>Productos</h3>
+        <h3>Services</h3>
 
         <table>
             <thead>
                 <tr>
-                    <th>Servicio</th>
-                    <th>Descripción</th>
-                    <th>Cantidad</th>
-                    <th>Precio</th>
+                    <th>Service/Product</th>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
                     <th>Total</th>
-                    <th>Acción</th>
+                    <th>Action</th>
                 </tr>
             </thead>
 
             <tbody>
                 {% for p in productos %}
                 <tr>
-                    <td data-label="Servicio">{{p[0]}}</td>
-                    <td data-label="Descripción">{{p[1]}}</td>
-                    <td data-label="Cantidad">{{p[2]}}</td>
-                    <td data-label="Precio">{{p[3]}}</td>
+                    <td data-label="Service/Product">{{p[0]}}</td>
+                    <td data-label="Description">{{p[1]}}</td>
+                    <td data-label="Quantity">{{p[2]}}</td>
+                    <td data-label="Unit Price">{{p[3]}}</td>
                     <td data-label="Total">{{p[4]}}</td>
-                    <td data-label="Acción">
+                    <td data-label="Action">
                         <button class="red" name="action" value="eliminar">
                             <input type="hidden" name="index" value="{{loop.index0}}">
                             X
@@ -231,8 +231,8 @@
 
     <!-- BOTONES -->
     <div class="buttons">
-        <button class="green" name="action" value="pdf">Generar PDF</button>
-        <button class="gray" name="action" value="nuevo">Nuevo</button>
+        <button class="green" name="action" value="pdf">Generate PDF</button>
+        <button class="gray" name="action" value="nuevo">New</button>
     </div>
 
 </form>
