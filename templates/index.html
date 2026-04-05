@@ -11,7 +11,9 @@
             padding: 20px;
         }
 
-        h2 { text-align: center; }
+        h2 {
+            text-align: center;
+        }
 
         .card {
             background: white;
@@ -58,7 +60,9 @@
             text-align: center;
         }
 
-        th { background: #e5e7eb; }
+        th {
+            background: #e5e7eb;
+        }
     </style>
 </head>
 
@@ -68,16 +72,15 @@
 
 <form method="POST">
 
-    <!-- COMPANY -->
+    <!-- EMPRESA -->
     <div class="card">
         <h3>Company Info</h3>
-
         <input name="empresa" placeholder="Company">
         <input name="cliente" placeholder="Quote Subject">
         <textarea name="notas" placeholder="Notes"></textarea>
     </div>
 
-    <!-- PRODUCT -->
+    <!-- PRODUCTOS -->
     <div class="card">
         <h3>Add Service</h3>
 
@@ -87,11 +90,11 @@
             <input name="qty" placeholder="Qty">
             <input name="precio" placeholder="Price">
 
-            <button type="submit" class="blue" name="action" value="agregar">Add</button>
+            <button class="blue" name="agregar">Add</button>
         </div>
     </div>
 
-    <!-- TABLE -->
+    <!-- TABLA -->
     <div class="card">
         <h3>Products</h3>
 
@@ -113,27 +116,16 @@
                 <td>{{p[3]}}</td>
                 <td>{{p[4]}}</td>
                 <td>
-                    <button type="submit"
-                            class="red"
-                            name="action"
-                            value="eliminar"
-                            formaction="?index={{loop.index0}}">
-                        X
-                    </button>
+                    <button class="red" name="eliminar" value="{{loop.index0}}">X</button>
                 </td>
             </tr>
             {% endfor %}
         </table>
     </div>
 
-    <!-- ACTION BUTTONS -->
-    <button type="submit" class="green" name="action" value="pdf">
-        Generate PDF
-    </button>
-
-    <button type="submit" class="gray" name="action" value="nuevo">
-        New
-    </button>
+    <!-- BOTONES -->
+    <button class="green" name="pdf">Generate PDF</button>
+    <button class="gray" name="nuevo">New</button>
 
 </form>
 
